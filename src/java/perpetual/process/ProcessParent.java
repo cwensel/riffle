@@ -30,12 +30,12 @@ public class ProcessParent
 
   public Object getSink() throws ProcessException
     {
-    return findInvoke( SinkResource.class );
+    return findInvoke( ResourceOutgoing.class );
     }
 
   public Object getSource() throws ProcessException
     {
-    return findInvoke( SourceResource.class );
+    return findInvoke( ResourceIncoming.class );
     }
 
   public void prepare() throws ProcessException

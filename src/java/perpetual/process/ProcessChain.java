@@ -11,19 +11,33 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
+ * Class ProcessChain accepts an array of Object instances that declare the {@link Process} class annotation and
+ * related method annotations and invoke each instance.
+ * <p/>
+ * This class will optionally order all process instances by dependencies, and then invoke them sequentially.
  *
+ * @see Process
+ * @see ProcessPrepare
+ * @see ProcessStart
+ * @see ProcessStop
+ * @see ProcessComplete
+ * @see ProcessCleanup
+ * @see ResourceOutgoing
+ * @see ResourceIncoming
  */
 public class ProcessChain
   {
+  /** Field processes */
   private ProcessParent[] processes;
-  private Thread thread = null;
+  /** Field thread */
+  private Thread thread;
+  /** Field processRunner */
   private ProcessRunner processRunner;
 
   private class ProcessRunner implements Runnable
     {
     private boolean stop;
     private int runningIndex = 0;
-
 
     @Override
     public void run()
@@ -80,23 +94,18 @@ public class ProcessChain
       }
     }
 
-  public ProcessChain( Object... objects )
-    {
-    this( false, objects );
-    }
-
-  public ProcessChain( boolean sort, Object... objects )
+  public ProcessChain( boolean topologicallyOrder, Object... objects )
     {
     processes = new ProcessParent[objects.length];
 
     for( int i = 0; i < objects.length; i++ )
       processes[ i ] = new ProcessParent( objects[ i ] );
 
-    if( sort )
+    if( topologicallyOrder )
       {
       try
         {
-        processes = sort( processes );
+        processes = topologicallyOrder( processes );
         }
       catch( ProcessException exception )
         {
@@ -105,9 +114,34 @@ public class ProcessChain
       }
     }
 
-  private ProcessParent[] sort( ProcessParent[] processes ) throws ProcessException
+  public void start()
     {
-    while( !isSorted( processes ) )
+    processRunner = new ProcessRunner();
+    thread = new Thread( processRunner );
+    thread.start();
+    }
+
+  public void complete()
+    {
+    try
+      {
+      thread.join();
+      }
+    catch( InterruptedException exception )
+      {
+      // ignore
+      }
+    }
+
+  public void stop()
+    {
+    if( processRunner != null )
+      processRunner.stop();
+    }
+
+  private static ProcessParent[] topologicallyOrder( ProcessParent[] processes ) throws ProcessException
+    {
+    while( !isTopologicallyOrdered( processes ) )
       {
       List<ProcessParent> sorted = new LinkedList<ProcessParent>();
 
@@ -158,7 +192,7 @@ public class ProcessChain
     return processes;
     }
 
-  private boolean isSorted( ProcessParent[] processes ) throws ProcessException
+  private static boolean isTopologicallyOrdered( ProcessParent[] processes ) throws ProcessException
     {
     for( int i = 0; i < processes.length; i++ )
       {
@@ -174,30 +208,5 @@ public class ProcessChain
       }
 
     return true;
-    }
-
-  public void start()
-    {
-    processRunner = new ProcessRunner();
-    thread = new Thread( processRunner );
-    thread.start();
-    }
-
-  public void complete()
-    {
-    try
-      {
-      thread.join();
-      }
-    catch( InterruptedException exception )
-      {
-      // ignore
-      }
-    }
-
-  public void stop()
-    {
-    if( processRunner != null )
-      processRunner.stop();
     }
   }

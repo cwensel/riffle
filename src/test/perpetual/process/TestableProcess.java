@@ -15,8 +15,8 @@ public class TestableProcess implements Comparable<TestableProcess>
   public static int lastId = -1;
 
   final int id;
-  String source;
-  String sink;
+  String incoming;
+  String outgoing;
   long delay = 1000;
 
   boolean prepareCalled = false;
@@ -26,24 +26,24 @@ public class TestableProcess implements Comparable<TestableProcess>
   boolean stopCalled = false;
   boolean finished = false;
 
-  public TestableProcess( int id, String source, String sink, long delay )
+  public TestableProcess( int id, String incoming, String outgoing, long delay )
     {
     this.id = id;
-    this.source = source;
-    this.sink = sink;
+    this.incoming = incoming;
+    this.outgoing = outgoing;
     this.delay = delay;
     }
 
-  @SinkResource
-  public String getSink()
+  @ResourceOutgoing
+  public String getOutgoing()
     {
-    return sink;
+    return outgoing;
     }
 
-  @SourceResource
-  public String getSource()
+  @ResourceIncoming
+  public String getIncoming()
     {
-    return source;
+    return incoming;
     }
 
   @ProcessPrepare
