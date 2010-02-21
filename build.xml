@@ -1,0 +1,344 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+  ~
+  ~ Project and contact information: http://www.concurrentinc.com/
+  -->
+
+<project name="perpetual" default="compile" basedir=".">
+
+  <dirname property="perpetual.basedir" file="${ant.file.perpetual}"/>
+
+  <property name="build.number" value="dev"/>
+  <property file="${user.home}/build.properties"/>
+  <property file="${perpetual.basedir}/version.properties"/>
+  <property file="${perpetual.basedir}/build.properties"/>
+
+  <property name="perpetual.release.version" value="x.y.z"/>
+
+  <property name="javac.debug" value="true"/>
+  <property name="test.haltonerror" value="true"/>
+
+  <property name="src" location="${perpetual.basedir}/src"/>
+  <property name="src.java" location="${src}/java"/>
+  <property name="src.test" location="${src}/test"/>
+
+  <property name="build" location="${perpetual.basedir}/build/"/>
+  <property name="build.classes" location="${build}"/>
+  <property name="build.java" location="${build.classes}/java"/>
+  <property name="build.test" location="${build.classes}/test"/>
+
+  <property name="test.results" location="${build}/testresults"/>
+  <property name="test.showoutput" value="no"/>
+
+  <property name="lib" location="${perpetual.basedir}/lib"/>
+  <property name="lib.build" location="${lib}/build"/>
+  <property name="dist" location="${perpetual.basedir}/dist"/>
+  <property name="javadoc" location="${perpetual.basedir}/javadoc"/>
+  <property name="log" location="${perpetual.basedir}/log"/>
+
+  <property name="jar.perpetual" value="perpetual-${perpetual.release.version}-${build.number}.jar"/>
+  <property name="jar.perpetual-test" value="perpetual-test-${perpetual.release.version}-${build.number}.jar"/>
+
+  <property name="tar.perpetual.prefix" value="cascading-${perpetual.release.version}-${build.number}"/>
+  <property name="tar.perpetual" value="${tar.perpetual.prefix}.tgz"/>
+
+  <path id="build.class.path">
+    <pathelement location="${build.java}"/>
+    <pathelement location="${build.test}"/>
+  </path>
+
+  <path id="jars.class.path">
+    <fileset dir="${build}" erroronmissingdir="false">
+      <include name="perpetual-*.jar"/>
+      <include name="perpetual-test-*.jar"/>
+    </fileset>
+
+    <fileset dir="${basedir}" erroronmissingdir="false">
+      <include name="perpetual-*.jar"/>
+      <include name="perpetual-test-*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="deps.class.path">
+    <fileset dir="${lib}">
+      <include name="*.jar"/>
+    </fileset>
+
+    <fileset dir="${lib.build}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="project.class.path">
+    <path refid="build.class.path"/>
+    <path refid="deps.class.path"/>
+  </path>
+
+  <path id="package.class.path">
+    <path refid="jars.class.path"/>
+    <path refid="deps.class.path"/>
+  </path>
+
+  <path id="project.src.path">
+    <pathelement location="${src.java}"/>
+    <pathelement location="${src.test}"/>
+  </path>
+
+  <path id="javadoc.src.path">
+    <pathelement location="${src.java}"/>
+  </path>
+
+  <!-- sets up environment -->
+  <target name="init">
+    <echo message="initializing perpetual environment..."/>
+
+    <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.test}"/>
+    <mkdir dir="${test.results}"/>
+
+    <property name="CLASSPATH" refid="project.class.path"/>
+    <!--<echo message="${CLASSPATH}"/>-->
+  </target>
+
+  <target name="compile" depends="init">
+    <echo message="building perpetual..."/>
+
+    <javac srcdir="${src.java}" destdir="${build.java}" verbose="off" debug="${javac.debug}">
+      <classpath refid="project.class.path"/>
+    </javac>
+
+    <copy todir="${build.java}/perpetual" file="${perpetual.basedir}/version.properties"/>
+    <echo message="build.number=${build.number}" file="${build.java}/perpetual/build.number.properties"/>
+
+    <copy todir="${build.java}">
+      <fileset dir="${src.java}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${src.test}" destdir="${build.test}" verbose="off" debug="${javac.debug}">
+      <classpath refid="project.class.path"/>
+    </javac>
+
+    <copy todir="${build.test}">
+      <fileset dir="${src.test}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="javadoc" depends="init">
+    <echo message="creating perpetual javadoc..."/>
+    <delete dir="${javadoc}"/>
+    <mkdir dir="${javadoc}"/>
+
+    <javadoc sourcepathref="javadoc.src.path"
+             destdir="${javadoc}"
+             packagenames="perpetual.*"
+             windowtitle="perpetual">
+      <link href="http://java.sun.com/javase/6/docs/api/"/>
+      <bottom><![CDATA[<i>Copyright &#169; 2007-2009 Concurrent, Inc. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+
+  </target>
+
+  <!-- runs JUnit tests -->
+  <target name="test" depends="init, compile">
+    <echo message="running all perpetual tests..."/>
+
+    <junit printsummary="true" showoutput="${test.showoutput}" fork="yes" haltonerror="no" haltonfailure="no" dir="."
+           maxmemory="756m">
+
+      <sysproperty key="test.build.data" value="data"/>
+
+      <!--<jvmarg value="-Xdebug"/>--><!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>-->
+
+      <classpath>
+        <path refid="project.class.path"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <formatter type="plain" usefile="true"/>
+
+      <test name="${testcase}" todir="${test.results}" if="testcase" haltonfailure="${test.haltonerror}"/>
+      <batchtest todir="${test.results}" haltonfailure="${test.haltonerror}" unless="testcase">
+        <fileset dir="${src.test}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+  </target>
+
+  <target name="run-test-package">
+    <echo message="running all packaged perpetual tests..."/>
+
+    <mkdir dir="package-tests"/>
+
+    <untar src="${tar.perpetual}" compression="gzip" dest="package-tests"/>
+
+    <!-- hack to support data files in test packages -->
+    <unzip src="package-tests/${tar.perpetual.prefix}/${jar.perpetual-test}"
+           dest="package-tests/${tar.perpetual.prefix}/build/test">
+      <patternset>
+        <include name="data/**"/>
+      </patternset>
+    </unzip>
+
+    <ant inheritAll="false" antfile="package-tests/${tar.perpetual.prefix}/build.xml"
+         target="test-package">
+      <property name="hadoop.home" value="${hadoop.home}"/>
+    </ant>
+
+  </target>
+
+  <target name="test-package">
+    <echo message="running all packaged perpetual tests..."/>
+
+    <mkdir dir="tests"/>
+    <mkdir dir="tests/results"/>
+
+    <junit printsummary="true" showoutput="${test.showoutput}" fork="yes" haltonerror="no" haltonfailure="no" dir="."
+           maxmemory="756m">
+
+      <sysproperty key="test.build.data" value="tests/data"/>
+
+      <!--<jvmarg value="-Xdebug"/>--><!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>-->
+
+      <classpath>
+        <path refid="package.class.path"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <formatter type="plain" usefile="true"/>
+
+      <test name="${testcase}" todir="${test.results}" if="testcase" haltonfailure="${test.haltonerror}"/>
+      <batchtest todir="tests/results" haltonfailure="${test.haltonerror}" unless="testcase">
+        <fileset dir="${src.test}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+  </target>
+
+  <!-- cleans up build artifacts -->
+  <target name="clean">
+    <echo message="cleaning perpetual..."/>
+    <delete dir="${build}"/>
+    <delete dir="${javadoc}"/>
+  </target>
+
+  <!-- removes build -->
+  <target name="nuke">
+    <echo message="nuking perpetual..."/>
+    <delete dir="${build}"/>
+    <delete dir="${javadoc}"/>
+    <delete dir="${dist}"/>
+    <delete dir="${log}"/>
+    <delete dir="package-tests"/>
+    <delete dir="tests"/>
+
+    <delete>
+      <fileset dir="." includes="perpetual*.tgz"/>
+      <fileset dir="." includes="TEST-*"/>
+      <fileset dir="." includes="junit*.properties"/>
+      <fileset dir="." includes="**/.DS_Store"/>
+    </delete>
+
+  </target>
+
+  <!-- jar build -->
+  <target name="jar" depends="compile">
+
+    <echo message="jarring perpetual..."/>
+    <delete file="${build}/${jar.perpetual}"/>
+    <delete file="${build}/${jar.perpetual-test}"/>
+    <delete dir="${build.java}/lib"/>
+
+    <manifest file="${build}/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <!--<attribute name="Main-Class" value="package.Main"/>-->
+    </manifest>
+
+    <jar jarfile="${build}/${jar.perpetual}" manifest="${build}/MANIFEST.MF" compress="yes">
+      <fileset dir="${build.java}"/>
+    </jar>
+
+    <jar jarfile="${build}/${jar.perpetual-test}" manifest="${build}/MANIFEST.MF" compress="yes">
+      <fileset dir="${build.test}">
+        <include name="perpetual/**"/>
+        <include name="data/**"/>
+        <include name="log4j.properties"/>
+        <include name="hadoop-site.xml"/>
+      </fileset>
+    </jar>
+
+    <!-- hadoop supports jars in a lib directory -->
+    <mkdir dir="${build.java}/lib"/>
+
+    <copy todir="${build.java}/lib">
+      <fileset dir="${lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
+    <delete dir="${build.java}/META-INF"/>
+
+    <delete dir="${build.java}/META-INF"/>
+
+    <jar jarfile="${build}/${jar.perpetual}" manifest="${build}/MANIFEST.MF" compress="yes">
+      <fileset dir="${build.java}"/>
+    </jar>
+
+  </target>
+
+  <target name="dist" depends="jar,javadoc">
+    <echo message="creating version: ${perpetual.release.version}-${build.number}"/>
+    <mkdir dir="${dist}"/>
+
+    <echo message="build.number=${build.number}" file="${dist}/build.number.properties"/>
+
+    <copy todir="${dist}">
+
+      <fileset dir=".">
+        <exclude name="build.properties"/>
+        <exclude name="parent-build.xml"/>
+
+        <exclude name=".git*/**"/>
+        <exclude name="build/**"/>
+        <exclude name="dist/**"/>
+        <exclude name="tests/**"/>
+        <exclude name="package-tests/**"/>
+        <exclude name="www/**"/>
+        <exclude name="log/**"/>
+
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/*.tgz"/>
+        <exclude name="TEST-*"/>
+        <exclude name="**/.DS_Store"/>
+      </fileset>
+
+    </copy>
+
+    <copy file="${build}/${jar.perpetual}" todir="${dist}"/>
+    <copy file="${build}/${jar.perpetual-test}" todir="${dist}"/>
+
+  </target>
+
+  <target name="package" depends="nuke,dist">
+    <tar destfile="${tar.perpetual}"
+         compression="gzip" longfile="gnu">
+      <tarfileset dir="dist/" prefix="${tar.perpetual.prefix}">
+        <include name="**/**"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="push-package" unless="${package.remote.path}">
+    <property name="package.remote.port" value="22"/>
+    <scp file="${tar.perpetual}" todir="${package.remote.path}" keyfile="${package.remote.keyfile}"
+         passphrase="" port="${package.remote.port}" trust="true"/>
+  </target>
+
+</project>
