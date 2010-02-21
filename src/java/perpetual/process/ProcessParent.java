@@ -126,4 +126,16 @@ public class ProcessParent
     throw new IllegalStateException( "no method found declaring annotation: " + type.getName() );
     }
 
+  public String toString()
+    {
+    try
+      {
+      return getSource() + "->" + getSink() + ":" + process.toString();
+      }
+    catch( ProcessException exception )
+      {
+      throw new IllegalStateException( "unable to get source or sink", exception.getCause() );
+      }
+    }
+
   }

@@ -10,8 +10,10 @@ package perpetual.process;
  *
  */
 @Process
-public class TestableProcess
+public class TestableProcess implements Comparable<TestableProcess>
   {
+  public static int lastId = -1;
+
   final int id;
   String source;
   String sink;
@@ -64,6 +66,12 @@ public class TestableProcess
     try
       {
       Thread.sleep( delay );
+
+      if( lastId >= id )
+        throw new IllegalStateException( "processes executed out of order, id:" + id + ", lastId: " + lastId );
+
+      lastId = id;
+
       finished = true;
       }
     catch( InterruptedException exception )
@@ -83,5 +91,17 @@ public class TestableProcess
   public void stop()
     {
     stopCalled = true;
+    }
+
+  @Override
+  public String toString()
+    {
+    return "TestableProcess{" + "id=" + id + '}';
+    }
+
+  @Override
+  public int compareTo( TestableProcess testableProcess )
+    {
+    return id - testableProcess.id;
     }
   }

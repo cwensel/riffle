@@ -6,6 +6,9 @@
 
 package perpetual.process;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import junit.framework.TestCase;
 
 /**
@@ -23,9 +26,32 @@ public class ProcessTest extends TestCase
     TestableProcess[] processes = new TestableProcess[10];
 
     for( int i = 0; i < processes.length; i++ )
-      processes[ i ] = new TestableProcess( i, Integer.toString( i ), Integer.toString( i + 1 ), 1000 );
+      processes[ i ] = new TestableProcess( i, Integer.toString( i ), Integer.toString( i + 1 ), 500 );
 
-    ProcessChain processChain = new ProcessChain( processes );
+    runTest( false, processes );
+    }
+
+  public void testProcessControllerSorting() throws Exception
+    {
+    TestableProcess[] processes = new TestableProcess[10];
+
+    for( int i = 0; i < processes.length; i++ )
+      processes[ i ] = new TestableProcess( i, Integer.toString( i ), Integer.toString( i + 1 ), 500 );
+
+    Arrays.sort( processes, Collections.<Object>reverseOrder() );
+
+    TestableProcess temp = processes[ 3 ];
+    processes[ 3 ] = processes[ 7 ];
+    processes[ 7 ] = temp;
+
+    runTest( true, processes );
+    }
+
+  private void runTest( boolean sort, TestableProcess[] processes )
+    {
+    TestableProcess.lastId = -1;
+
+    ProcessChain processChain = new ProcessChain( sort, processes );
 
     processChain.start();
     processChain.complete();
