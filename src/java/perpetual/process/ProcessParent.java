@@ -24,16 +24,18 @@ public class ProcessParent
 
     Process annotation = process.getClass().getAnnotation( Process.class );
 
+    Annotation[] annotations = process.getClass().getAnnotations();
+
     if( annotation == null )
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );
     }
 
-  public Object getSink() throws ProcessException
+  public Object getResourceOutgoing() throws ProcessException
     {
     return findInvoke( ResourceOutgoing.class );
     }
 
-  public Object getSource() throws ProcessException
+  public Object getResourceIncoming() throws ProcessException
     {
     return findInvoke( ResourceIncoming.class );
     }
@@ -130,7 +132,7 @@ public class ProcessParent
     {
     try
       {
-      return getSource() + "->" + getSink() + ":" + process.toString();
+      return getResourceIncoming() + "->" + getResourceOutgoing() + ":" + process.toString();
       }
     catch( ProcessException exception )
       {

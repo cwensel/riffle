@@ -13,9 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation ProcessCleanup identifies a class method as implementing a means to cleanup a process after invocation.
+ * <p/>
+ * The ProcessCleanup method is guaranteed to be called after the {@link ProcessPrepare} method.
+ *
+ * @see ProcessPrepare
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

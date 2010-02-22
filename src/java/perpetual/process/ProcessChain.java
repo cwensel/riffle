@@ -6,6 +6,8 @@
 
 package perpetual.process;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -158,21 +160,21 @@ public class ProcessChain
           {
           ProcessParent current = iterator.next();
 
-          if( process.getSource().equals( current.getSource() ) )
+          if( equalsOrContains( process.getResourceIncoming(), current.getResourceIncoming() ) )
             {
             iterator.add( process );
             inserted = true;
             break;
             }
 
-          if( process.getSource().equals( current.getSink() ) )
+          if( equalsOrContains( process.getResourceIncoming(), current.getResourceOutgoing() ) )
             {
             iterator.add( process );
             inserted = true;
             break;
             }
 
-          if( current.getSource().equals( process.getSink() ) )
+          if( equalsOrContains( current.getResourceIncoming(), process.getResourceOutgoing() ) )
             {
             iterator.remove();
             iterator.add( process );
@@ -192,6 +194,20 @@ public class ProcessChain
     return processes;
     }
 
+  private static boolean equalsOrContains( Object lhs, Object rhs )
+    {
+    if( !( lhs instanceof Collection ) && !( rhs instanceof Collection ) )
+      return lhs.equals( rhs );
+
+    if( lhs instanceof Collection && !( rhs instanceof Collection ) )
+      return ( (Collection) lhs ).contains( rhs );
+
+    if( !( lhs instanceof Collection ) && rhs instanceof Collection )
+      return ( (Collection) rhs ).contains( lhs );
+
+    return !Collections.disjoint( (Collection) lhs, (Collection) rhs );
+    }
+
   private static boolean isTopologicallyOrdered( ProcessParent[] processes ) throws ProcessException
     {
     for( int i = 0; i < processes.length; i++ )
@@ -202,7 +218,7 @@ public class ProcessChain
         {
         ProcessParent rhs = processes[ j ];
 
-        if( lhs.getSource().equals( rhs.getSink() ) )
+        if( equalsOrContains( lhs.getResourceIncoming(), rhs.getResourceOutgoing() ) )
           return false;
         }
       }

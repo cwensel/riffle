@@ -10,13 +10,11 @@ package perpetual.process;
  *
  */
 @Process
-public class TestableProcess implements Comparable<TestableProcess>
+public abstract class TestableProcess implements Comparable<TestableProcess>
   {
   public static int lastId = -1;
 
   final int id;
-  String incoming;
-  String outgoing;
   long delay = 1000;
 
   boolean prepareCalled = false;
@@ -26,24 +24,10 @@ public class TestableProcess implements Comparable<TestableProcess>
   boolean stopCalled = false;
   boolean finished = false;
 
-  public TestableProcess( int id, String incoming, String outgoing, long delay )
+  public TestableProcess( int id, long delay )
     {
     this.id = id;
-    this.incoming = incoming;
-    this.outgoing = outgoing;
     this.delay = delay;
-    }
-
-  @ResourceOutgoing
-  public String getOutgoing()
-    {
-    return outgoing;
-    }
-
-  @ResourceIncoming
-  public String getIncoming()
-    {
-    return incoming;
     }
 
   @ProcessPrepare
