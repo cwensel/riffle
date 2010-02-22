@@ -36,8 +36,8 @@ import java.util.ListIterator;
  * @see ProcessStop
  * @see ProcessComplete
  * @see ProcessCleanup
- * @see ResourceOutgoing
- * @see ResourceIncoming
+ * @see DependencyOutgoing
+ * @see DependencyIncoming
  */
 public class ProcessChain
   {

@@ -35,13 +35,13 @@ public class MultiResourceTestableProcess extends TestableProcess
     this.outgoing = outgoing;
     }
 
-  @ResourceOutgoing
+  @DependencyOutgoing
   public Collection<String> getOutgoing()
     {
     return outgoing;
     }
 
-  @ResourceIncoming
+  @DependencyIncoming
   public Collection<String> getIncoming()
     {
     return incoming;

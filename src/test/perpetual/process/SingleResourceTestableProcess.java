@@ -33,13 +33,13 @@ public class SingleResourceTestableProcess extends TestableProcess
     this.outgoing = outgoing;
     }
 
-  @ResourceOutgoing
+  @DependencyOutgoing
   public String getOutgoing()
     {
     return outgoing;
     }
 
-  @ResourceIncoming
+  @DependencyIncoming
   public String getIncoming()
     {
     return incoming;

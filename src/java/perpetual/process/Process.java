@@ -36,8 +36,8 @@ import java.lang.annotation.Target;
  * @see ProcessStop
  * @see ProcessComplete
  * @see ProcessCleanup
- * @see ResourceOutgoing
- * @see ResourceIncoming
+ * @see DependencyOutgoing
+ * @see DependencyIncoming
  */
 @Documented
 @Inherited

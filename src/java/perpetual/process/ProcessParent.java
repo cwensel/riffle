@@ -44,12 +44,12 @@ public class ProcessParent
 
   public Object getResourceOutgoing() throws ProcessException
     {
-    return findInvoke( ResourceOutgoing.class );
+    return findInvoke( DependencyOutgoing.class );
     }
 
   public Object getResourceIncoming() throws ProcessException
     {
-    return findInvoke( ResourceIncoming.class );
+    return findInvoke( DependencyIncoming.class );
     }
 
   public void prepare() throws ProcessException
