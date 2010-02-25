@@ -33,14 +33,20 @@ public class ProcessParent implements Serializable
 
   public ProcessParent( Object process )
     {
-    this.process = process;
+    if( process == null )
+      throw new IllegalArgumentException( "process argument may not be null" );
 
+    this.process = verifyObjectIsProcess( process );
+    }
+
+  private Object verifyObjectIsProcess( Object process )
+    {
     Process annotation = process.getClass().getAnnotation( Process.class );
-
-    Annotation[] annotations = process.getClass().getAnnotations();
 
     if( annotation == null )
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );
+
+    return process;
     }
 
   public Object getDependencyOutgoing() throws ProcessException
@@ -81,6 +87,7 @@ public class ProcessParent implements Serializable
   private Object findInvoke( Class<? extends Annotation> type ) throws ProcessException
     {
     Method method = null;
+
     try
       {
       method = findMethodWith( type );
