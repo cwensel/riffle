@@ -172,21 +172,21 @@ public class ProcessChain
           {
           ProcessParent current = iterator.next();
 
-          if( equalsOrContains( process.getResourceIncoming(), current.getResourceIncoming() ) )
+          if( equalsOrContains( process.getDependencyIncoming(), current.getDependencyIncoming() ) )
             {
             iterator.add( process );
             inserted = true;
             break;
             }
 
-          if( equalsOrContains( process.getResourceIncoming(), current.getResourceOutgoing() ) )
+          if( equalsOrContains( process.getDependencyIncoming(), current.getDependencyOutgoing() ) )
             {
             iterator.add( process );
             inserted = true;
             break;
             }
 
-          if( equalsOrContains( current.getResourceIncoming(), process.getResourceOutgoing() ) )
+          if( equalsOrContains( current.getDependencyIncoming(), process.getDependencyOutgoing() ) )
             {
             iterator.remove();
             iterator.add( process );
@@ -230,7 +230,7 @@ public class ProcessChain
         {
         ProcessParent rhs = processes[ j ];
 
-        if( equalsOrContains( lhs.getResourceIncoming(), rhs.getResourceOutgoing() ) )
+        if( equalsOrContains( lhs.getDependencyIncoming(), rhs.getDependencyOutgoing() ) )
           return false;
         }
       }

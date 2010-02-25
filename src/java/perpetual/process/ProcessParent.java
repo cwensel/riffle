@@ -18,6 +18,7 @@
 
 package perpetual.process;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +27,7 @@ import java.lang.reflect.Modifier;
 /**
  *
  */
-public class ProcessParent
+public class ProcessParent implements Serializable
   {
   Object process;
 
@@ -42,12 +43,12 @@ public class ProcessParent
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );
     }
 
-  public Object getResourceOutgoing() throws ProcessException
+  public Object getDependencyOutgoing() throws ProcessException
     {
     return findInvoke( DependencyOutgoing.class );
     }
 
-  public Object getResourceIncoming() throws ProcessException
+  public Object getDependencyIncoming() throws ProcessException
     {
     return findInvoke( DependencyIncoming.class );
     }
@@ -144,7 +145,7 @@ public class ProcessParent
     {
     try
       {
-      return getResourceIncoming() + "->" + getResourceOutgoing() + ":" + process.toString();
+      return getDependencyIncoming() + "->" + getDependencyOutgoing() + ":" + process.toString();
       }
     catch( ProcessException exception )
       {
