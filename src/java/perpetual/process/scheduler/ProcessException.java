@@ -16,7 +16,7 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

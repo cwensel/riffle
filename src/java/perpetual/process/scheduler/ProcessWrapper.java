@@ -16,7 +16,7 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -24,22 +24,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import perpetual.process.DependencyIncoming;
+import perpetual.process.DependencyOutgoing;
+import perpetual.process.Process;
+import perpetual.process.ProcessCleanup;
+import perpetual.process.ProcessComplete;
+import perpetual.process.ProcessPrepare;
+import perpetual.process.ProcessStart;
+import perpetual.process.ProcessStop;
+
 /**
- * Class ProcessWrapper wraps an Object instance that has the {@link Process} class Annotation and all relevant method
+ * Class ProcessWrapper wraps an Object instance that has the {@link perpetual.process.Process} class Annotation and all relevant method
  * Annotations.
  * <p/>
  * It is generally unnecessary for users to use this class directly. {@link ProcessChain} will automatically wrap
  * process objects with an instance of this class.
  *
  * @see ProcessChain
- * @see Process
- * @see ProcessPrepare
- * @see ProcessStart
- * @see ProcessStop
- * @see ProcessComplete
- * @see ProcessCleanup
- * @see DependencyOutgoing
- * @see DependencyIncoming
+ * @see perpetual.process.Process
+ * @see perpetual.process.ProcessPrepare
+ * @see perpetual.process.ProcessStart
+ * @see perpetual.process.ProcessStop
+ * @see perpetual.process.ProcessComplete
+ * @see perpetual.process.ProcessCleanup
+ * @see perpetual.process.DependencyOutgoing
+ * @see perpetual.process.DependencyIncoming
  */
 public class ProcessWrapper implements Serializable
   {
@@ -55,7 +64,7 @@ public class ProcessWrapper implements Serializable
 
   private Object verifyObjectIsProcess( Object process )
     {
-    Process annotation = process.getClass().getAnnotation( Process.class );
+    perpetual.process.Process annotation = process.getClass().getAnnotation( Process.class );
 
     if( annotation == null )
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );

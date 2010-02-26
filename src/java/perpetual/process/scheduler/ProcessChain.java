@@ -16,7 +16,7 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,19 +25,19 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Class ProcessChain accepts an array of Object instances that declare the {@link Process} class annotation and
+ * Class ProcessChain accepts an array of Object instances that declare the {@link perpetual.process.Process} class annotation and
  * related method annotations and invoke each instance.
  * <p/>
  * This class will optionally order all process instances by dependencies, and then invoke them sequentially.
  *
- * @see Process
- * @see ProcessPrepare
- * @see ProcessStart
- * @see ProcessStop
- * @see ProcessComplete
- * @see ProcessCleanup
- * @see DependencyOutgoing
- * @see DependencyIncoming
+ * @see perpetual.process.Process
+ * @see perpetual.process.ProcessPrepare
+ * @see perpetual.process.ProcessStart
+ * @see perpetual.process.ProcessStop
+ * @see perpetual.process.ProcessComplete
+ * @see perpetual.process.ProcessCleanup
+ * @see perpetual.process.DependencyOutgoing
+ * @see perpetual.process.DependencyIncoming
  */
 public class ProcessChain
   {
