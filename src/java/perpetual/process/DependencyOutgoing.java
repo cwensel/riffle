@@ -25,9 +25,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation DependencyOutgoing identifies a class method as implementing a 'getter' that returns an {link Object}
+ * or {@link java.util.Collection<Object>} that represents the dependencies that will be satisfied by this process
+ * when it is executed.
+ *
+ * @see DependencyIncoming
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

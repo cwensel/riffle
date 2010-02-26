@@ -25,9 +25,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation DependencyIncoming identifies a class method as implementing a 'getter' that returns an {link Object}
+ * or {@link java.util.Collection<Object>} that represents the dependencies that must be satisfied by upstream processes
+ * before the current process can be executed.
+ * <p/>
+ * If no other process under consideration for the workflow declares it satisfies the dependency, it will be assumed
+ * the dependency has been satisfied externally (the file already exists in the system, etc).
+ *
+ * @see DependencyOutgoing
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

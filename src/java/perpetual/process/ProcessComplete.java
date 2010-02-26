@@ -25,9 +25,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation ProcessComplete identifies a class method as implementing a means to start (invoke or execute) a process.
+ * <p/>
+ * This method should return only after the process completes (synchronously). The {@link ProcessStart} method
+ * is the asynchronous (non-blocking) version of this method.
+ * <p/>
+ * The ProcessComplete method is called after the {@link ProcessPrepare} method.
+ *
+ * @see ProcessPrepare
+ * @see ProcessStart
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

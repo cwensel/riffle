@@ -27,7 +27,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation ProcessCleanup identifies a class method as implementing a means to cleanup a process after invocation.
  * <p/>
- * The ProcessCleanup method is guaranteed to be called after the {@link ProcessPrepare} method.
+ * The ProcessCleanup method is guaranteed to be called after the {@link ProcessPrepare} method. And typically
+ * after the {@link ProcessStart} or {@link ProcessComplete} methods are called. Neither will be called after
+ * ProcessCleanup is called.
  *
  * @see ProcessPrepare
  */

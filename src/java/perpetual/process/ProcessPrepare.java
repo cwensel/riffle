@@ -25,9 +25,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation ProcessPrepare identifies a class method as implementing a means to prepare a process before invocation.
+ * <p/>
+ * The ProcessPrepare method is guaranteed to be called before the {@link ProcessCleanup} method.
+ *
+ * @see ProcessCleanup
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

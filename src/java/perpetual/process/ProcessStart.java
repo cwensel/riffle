@@ -25,9 +25,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation ProcessStart identifies a class method as implementing a means to start (invoke or execute) a process.
+ * <p/>
+ * This method should return immediately (asynchronously). The {@link ProcessComplete} method is the synchronous
+ * (blocking) version of this method.
+ * <p/>
+ * The ProcessStart method is called after the {@link ProcessPrepare} method. It may be called by the
+ * {@link ProcessComplete} method (but will block till the process is finished).
+ *
+ * @see ProcessPrepare
+ * @see ProcessComplete
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

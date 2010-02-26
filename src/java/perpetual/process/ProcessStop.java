@@ -25,9 +25,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * $Author: $
- * $Date: $
- * $Revision: $
+ * Annotation ProcessStop identifies a class method as implementing a means to stop (kill) a process after it
+ * has been started (and typically before it completes).
+ * <p/>
+ * It is possible ProcessStop is called before {@link ProcessStart} or {@link ProcessComplete} are called, depending
+ * on the scheduler implementation (allows for concurrent execution of independent processes).
+ *
+ * @see ProcessStart
+ * @see ProcessComplete
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
