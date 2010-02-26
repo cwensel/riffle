@@ -16,17 +16,22 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
+
+import java.util.Collection;
+
+import perpetual.process.DependencyIncoming;
+import perpetual.process.DependencyOutgoing;
 
 /**
  *
  */
-public class SingleResourceTestableProcess extends TestableProcess
+public class MultiResourceTestableProcess extends TestableProcess
   {
-  String incoming;
-  String outgoing;
+  Collection<String> incoming;
+  Collection<String> outgoing;
 
-  public SingleResourceTestableProcess( int id, String incoming, String outgoing, long delay )
+  public MultiResourceTestableProcess( int id, Collection<String> incoming, Collection<String> outgoing, long delay )
     {
     super( id, delay );
     this.incoming = incoming;
@@ -34,13 +39,13 @@ public class SingleResourceTestableProcess extends TestableProcess
     }
 
   @DependencyOutgoing
-  public String getOutgoing()
+  public Collection<String> getOutgoing()
     {
     return outgoing;
     }
 
   @DependencyIncoming
-  public String getIncoming()
+  public Collection<String> getIncoming()
     {
     return incoming;
     }

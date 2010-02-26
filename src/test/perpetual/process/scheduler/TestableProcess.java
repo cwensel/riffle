@@ -16,12 +16,18 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
+
+import perpetual.process.ProcessCleanup;
+import perpetual.process.ProcessComplete;
+import perpetual.process.ProcessPrepare;
+import perpetual.process.ProcessStart;
+import perpetual.process.ProcessStop;
 
 /**
  *
  */
-@Process
+@perpetual.process.Process
 public abstract class TestableProcess implements Comparable<TestableProcess>
   {
   public static int lastId = -1;

@@ -16,7 +16,7 @@
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process;
+package perpetual.process.scheduler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
-import perpetual.process.scheduler.ProcessChain;
 
 /**
  *
