@@ -25,13 +25,27 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
+ * Class ProcessWrapper wraps an Object instance that has the {@link Process} class Annotation and all relevant method
+ * Annotations.
+ * <p/>
+ * It is generally unnecessary for users to use this class directly. {@link ProcessChain} will automatically wrap
+ * process objects with an instance of this class.
  *
+ * @see ProcessChain
+ * @see Process
+ * @see ProcessPrepare
+ * @see ProcessStart
+ * @see ProcessStop
+ * @see ProcessComplete
+ * @see ProcessCleanup
+ * @see DependencyOutgoing
+ * @see DependencyIncoming
  */
-public class ProcessParent implements Serializable
+public class ProcessWrapper implements Serializable
   {
   Object process;
 
-  public ProcessParent( Object process )
+  public ProcessWrapper( Object process )
     {
     if( process == null )
       throw new IllegalArgumentException( "process argument may not be null" );

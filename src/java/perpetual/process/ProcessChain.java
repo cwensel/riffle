@@ -42,7 +42,7 @@ import java.util.ListIterator;
 public class ProcessChain
   {
   /** Field processes */
-  private ProcessParent[] processes;
+  private ProcessWrapper[] processes;
   /** Field thread */
   private Thread thread;
   /** Field processRunner */
@@ -110,10 +110,10 @@ public class ProcessChain
 
   public ProcessChain( boolean topologicallyOrder, Object... objects )
     {
-    processes = new ProcessParent[objects.length];
+    processes = new ProcessWrapper[objects.length];
 
     for( int i = 0; i < objects.length; i++ )
-      processes[ i ] = new ProcessParent( objects[ i ] );
+      processes[ i ] = new ProcessWrapper( objects[ i ] );
 
     if( topologicallyOrder )
       {
@@ -153,24 +153,24 @@ public class ProcessChain
       processRunner.stop();
     }
 
-  private static ProcessParent[] topologicallyOrder( ProcessParent[] processes ) throws ProcessException
+  private static ProcessWrapper[] topologicallyOrder( ProcessWrapper[] processes ) throws ProcessException
     {
     while( !isTopologicallyOrdered( processes ) )
       {
-      List<ProcessParent> sorted = new LinkedList<ProcessParent>();
+      List<ProcessWrapper> sorted = new LinkedList<ProcessWrapper>();
 
       sorted.add( processes[ 0 ] );
 
       for( int i = 1; i < processes.length; i++ )
         {
-        ProcessParent process = processes[ i ];
+        ProcessWrapper process = processes[ i ];
 
-        ListIterator<ProcessParent> iterator = sorted.listIterator();
+        ListIterator<ProcessWrapper> iterator = sorted.listIterator();
         boolean inserted = false;
 
         while( iterator.hasNext() )
           {
-          ProcessParent current = iterator.next();
+          ProcessWrapper current = iterator.next();
 
           if( equalsOrContains( process.getDependencyIncoming(), current.getDependencyIncoming() ) )
             {
@@ -200,7 +200,7 @@ public class ProcessChain
           sorted.add( 0, process );
         }
 
-      processes = sorted.toArray( new ProcessParent[sorted.size()] );
+      processes = sorted.toArray( new ProcessWrapper[sorted.size()] );
       }
 
     return processes;
@@ -220,15 +220,15 @@ public class ProcessChain
     return !Collections.disjoint( (Collection) lhs, (Collection) rhs );
     }
 
-  private static boolean isTopologicallyOrdered( ProcessParent[] processes ) throws ProcessException
+  private static boolean isTopologicallyOrdered( ProcessWrapper[] processes ) throws ProcessException
     {
     for( int i = 0; i < processes.length; i++ )
       {
-      ProcessParent lhs = processes[ i ];
+      ProcessWrapper lhs = processes[ i ];
 
       for( int j = i; j < processes.length; j++ )
         {
-        ProcessParent rhs = processes[ j ];
+        ProcessWrapper rhs = processes[ j ];
 
         if( equalsOrContains( lhs.getDependencyIncoming(), rhs.getDependencyOutgoing() ) )
           return false;
