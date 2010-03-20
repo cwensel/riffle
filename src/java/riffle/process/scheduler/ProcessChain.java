@@ -1,22 +1,10 @@
 /*
- * Copyright 2010 Concurrent, Inc.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process.scheduler;
+package riffle.process.scheduler;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,19 +13,19 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Class ProcessChain accepts an array of Object instances that declare the {@link perpetual.process.Process} class annotation and
+ * Class ProcessChain accepts an array of Object instances that declare the {@link riffle.process.Process} class annotation and
  * related method annotations and invoke each instance.
  * <p/>
  * This class will optionally order all process instances by dependencies, and then invoke them sequentially.
  *
- * @see perpetual.process.Process
- * @see perpetual.process.ProcessPrepare
- * @see perpetual.process.ProcessStart
- * @see perpetual.process.ProcessStop
- * @see perpetual.process.ProcessComplete
- * @see perpetual.process.ProcessCleanup
- * @see perpetual.process.DependencyOutgoing
- * @see perpetual.process.DependencyIncoming
+ * @see riffle.process.Process
+ * @see riffle.process.ProcessPrepare
+ * @see riffle.process.ProcessStart
+ * @see riffle.process.ProcessStop
+ * @see riffle.process.ProcessComplete
+ * @see riffle.process.ProcessCleanup
+ * @see riffle.process.DependencyOutgoing
+ * @see riffle.process.DependencyIncoming
  */
 public class ProcessChain
   {

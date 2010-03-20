@@ -1,22 +1,10 @@
 /*
- * Copyright 2010 Concurrent, Inc.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
 
-package perpetual.process.scheduler;
+package riffle.process.scheduler;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -24,31 +12,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import perpetual.process.DependencyIncoming;
-import perpetual.process.DependencyOutgoing;
-import perpetual.process.Process;
-import perpetual.process.ProcessCleanup;
-import perpetual.process.ProcessComplete;
-import perpetual.process.ProcessPrepare;
-import perpetual.process.ProcessStart;
-import perpetual.process.ProcessStop;
+import riffle.process.DependencyIncoming;
+import riffle.process.DependencyOutgoing;
+import riffle.process.Process;
+import riffle.process.ProcessCleanup;
+import riffle.process.ProcessComplete;
+import riffle.process.ProcessPrepare;
+import riffle.process.ProcessStart;
+import riffle.process.ProcessStop;
 
 /**
- * Class ProcessWrapper wraps an Object instance that has the {@link perpetual.process.Process} class Annotation and all relevant method
+ * Class ProcessWrapper wraps an Object instance that has the {@link riffle.process.Process} class Annotation and all relevant method
  * Annotations.
  * <p/>
  * It is generally unnecessary for users to use this class directly. {@link ProcessChain} will automatically wrap
  * process objects with an instance of this class.
  *
  * @see ProcessChain
- * @see perpetual.process.Process
- * @see perpetual.process.ProcessPrepare
- * @see perpetual.process.ProcessStart
- * @see perpetual.process.ProcessStop
- * @see perpetual.process.ProcessComplete
- * @see perpetual.process.ProcessCleanup
- * @see perpetual.process.DependencyOutgoing
- * @see perpetual.process.DependencyIncoming
+ * @see riffle.process.Process
+ * @see riffle.process.ProcessPrepare
+ * @see riffle.process.ProcessStart
+ * @see riffle.process.ProcessStop
+ * @see riffle.process.ProcessComplete
+ * @see riffle.process.ProcessCleanup
+ * @see riffle.process.DependencyOutgoing
+ * @see riffle.process.DependencyIncoming
  */
 public class ProcessWrapper implements Serializable
   {
@@ -64,7 +52,7 @@ public class ProcessWrapper implements Serializable
 
   private Object verifyObjectIsProcess( Object process )
     {
-    perpetual.process.Process annotation = process.getClass().getAnnotation( Process.class );
+    riffle.process.Process annotation = process.getClass().getAnnotation( Process.class );
 
     if( annotation == null )
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );
