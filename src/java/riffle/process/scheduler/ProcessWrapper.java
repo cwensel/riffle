@@ -57,6 +57,12 @@ public class ProcessWrapper implements Serializable
     if( annotation == null )
       throw new IllegalArgumentException( "given process instance must declare the Process annotation" );
 
+    findMethodWith( DependencyOutgoing.class, false );
+    findMethodWith( DependencyIncoming.class, false );
+    findMethodWith( ProcessStart.class, false );
+    findMethodWith( ProcessComplete.class, false );
+    findMethodWith( ProcessStop.class, false );
+
     return process;
     }
 
