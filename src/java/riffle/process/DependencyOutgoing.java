@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
  * Annotation DependencyOutgoing identifies a class method as implementing a 'getter' that returns an {link Object}
  * or {@link java.util.Collection<Object>} that represents the dependencies that will be satisfied by this process
  * when it is executed.
+ * <p/>
+ * This annotation is not optional.
  *
  * @see DependencyIncoming
  */

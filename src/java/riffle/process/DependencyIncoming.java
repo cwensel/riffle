@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -19,6 +19,8 @@ import java.lang.annotation.Target;
  * <p/>
  * If no other process under consideration for the workflow declares it satisfies the dependency, it will be assumed
  * the dependency has been satisfied externally (the file already exists in the system, etc).
+ * <p/>
+ * This annotation is not optional.
  *
  * @see DependencyOutgoing
  */

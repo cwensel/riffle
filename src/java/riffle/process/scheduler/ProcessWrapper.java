@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -62,46 +62,49 @@ public class ProcessWrapper implements Serializable
 
   public Object getDependencyOutgoing() throws ProcessException
     {
-    return findInvoke( DependencyOutgoing.class );
+    return findInvoke( DependencyOutgoing.class, false );
     }
 
   public Object getDependencyIncoming() throws ProcessException
     {
-    return findInvoke( DependencyIncoming.class );
+    return findInvoke( DependencyIncoming.class, false );
     }
 
   public void prepare() throws ProcessException
     {
-    findInvoke( ProcessPrepare.class );
+    findInvoke( ProcessPrepare.class, true );
     }
 
   public void cleanup() throws ProcessException
     {
-    findInvoke( ProcessCleanup.class );
+    findInvoke( ProcessCleanup.class, true );
     }
 
   public void start() throws ProcessException
     {
-    findInvoke( ProcessStart.class );
+    findInvoke( ProcessStart.class, false );
     }
 
   public void complete() throws ProcessException
     {
-    findInvoke( ProcessComplete.class );
+    findInvoke( ProcessComplete.class, false );
     }
 
   public void stop() throws ProcessException
     {
-    findInvoke( ProcessStop.class );
+    findInvoke( ProcessStop.class, false );
     }
 
-  private Object findInvoke( Class<? extends Annotation> type ) throws ProcessException
+  private Object findInvoke( Class<? extends Annotation> type, boolean isOptional ) throws ProcessException
     {
     Method method = null;
 
     try
       {
-      method = findMethodWith( type );
+      method = findMethodWith( type, isOptional );
+
+      if( method == null )
+        return null;
 
       return invokeMethod( method );
       }
@@ -133,7 +136,7 @@ public class ProcessWrapper implements Serializable
       }
     }
 
-  private Method findMethodWith( Class<? extends Annotation> type )
+  private Method findMethodWith( Class<? extends Annotation> type, boolean isOptional )
     {
     Method[] methods = process.getClass().getMethods();
 
@@ -156,7 +159,10 @@ public class ProcessWrapper implements Serializable
       return method;
       }
 
-    throw new IllegalStateException( "no method found declaring annotation: " + type.getName() );
+    if( !isOptional )
+      throw new IllegalStateException( "no method found declaring annotation: " + type.getName() );
+
+    return null;
     }
 
   public String toString()

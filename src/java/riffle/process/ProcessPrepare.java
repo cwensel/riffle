@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
  * Annotation ProcessPrepare identifies a class method as implementing a means to prepare a process before invocation.
  * <p/>
  * The ProcessPrepare method is guaranteed to be called before the {@link ProcessCleanup} method.
+ * <p/>
+ * This annotation is optional.
  *
  * @see ProcessCleanup
  */

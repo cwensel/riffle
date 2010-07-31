@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
  * The ProcessCleanup method is guaranteed to be called after the {@link ProcessPrepare} method. And typically
  * after the {@link ProcessStart} or {@link ProcessComplete} methods are called. Neither will be called after
  * ProcessCleanup is called.
+ * <p/>
+ * This annotation is optional.
  *
  * @see ProcessPrepare
  */

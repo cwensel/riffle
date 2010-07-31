@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -20,6 +20,8 @@ import java.lang.annotation.Target;
  * <p/>
  * The ProcessStart method is called after the {@link ProcessPrepare} method. It may be called by the
  * {@link ProcessComplete} method (but will block till the process is finished).
+ * <p/>
+ * This annotation is not optional.
  *
  * @see ProcessPrepare
  * @see ProcessComplete

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
  * <p/>
  * It is possible ProcessStop is called before {@link ProcessStart} or {@link ProcessComplete} are called, depending
  * on the scheduler implementation (allows for concurrent execution of independent processes).
+ * <p/>
+ * This annotation is not optional.
  *
  * @see ProcessStart
  * @see ProcessComplete
