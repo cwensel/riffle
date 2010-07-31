@@ -47,10 +47,12 @@ public class ProcessWrapper implements Serializable
     if( process == null )
       throw new IllegalArgumentException( "process argument may not be null" );
 
-    this.process = verifyObjectIsProcess( process );
+    this.process = process;
+
+    verifyObjectIsProcess( process );
     }
 
-  private Object verifyObjectIsProcess( Object process )
+  private void verifyObjectIsProcess( Object process )
     {
     riffle.process.Process annotation = process.getClass().getAnnotation( Process.class );
 
@@ -62,8 +64,6 @@ public class ProcessWrapper implements Serializable
     findMethodWith( ProcessStart.class, false );
     findMethodWith( ProcessComplete.class, false );
     findMethodWith( ProcessStop.class, false );
-
-    return process;
     }
 
   public Object getDependencyOutgoing() throws ProcessException
