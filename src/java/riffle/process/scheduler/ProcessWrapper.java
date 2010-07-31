@@ -30,11 +30,11 @@ import riffle.process.ProcessStop;
  *
  * @see ProcessChain
  * @see riffle.process.Process
- * @see riffle.process.ProcessPrepare
- * @see riffle.process.ProcessStart
+ * @see ProcessPrepare
+ * @see ProcessStart
  * @see riffle.process.ProcessStop
  * @see riffle.process.ProcessComplete
- * @see riffle.process.ProcessCleanup
+ * @see ProcessCleanup
  * @see riffle.process.DependencyOutgoing
  * @see riffle.process.DependencyIncoming
  */
@@ -61,7 +61,6 @@ public class ProcessWrapper implements Serializable
 
     findMethodWith( DependencyOutgoing.class, false );
     findMethodWith( DependencyIncoming.class, false );
-    findMethodWith( ProcessStart.class, false );
     findMethodWith( ProcessComplete.class, false );
     findMethodWith( ProcessStop.class, false );
     }
@@ -76,19 +75,71 @@ public class ProcessWrapper implements Serializable
     return findInvoke( DependencyIncoming.class, false );
     }
 
+  /**
+   * Method hasPrepare returns true if the annotated child Process object implements the {@link ProcessPrepare} method.
+   *
+   * @return boolean
+   */
+  public boolean hasPrepare()
+    {
+    return findMethodWith( ProcessPrepare.class, true ) != null;
+    }
+
+  /**
+   * Method prepare calls the annotated child Process object {@link ProcessPrepare} method.
+   * <p/>
+   * This method will not fail if the prepare method is not implemented.
+   *
+   * @throws ProcessException when
+   */
   public void prepare() throws ProcessException
     {
     findInvoke( ProcessPrepare.class, true );
     }
 
+  /**
+   * Method hasCleanup returns true if the annotated child Process object implements the {@link ProcessCleanup} method.
+   *
+   * @return boolean
+   */
+  public boolean hasCleanup()
+    {
+    return findMethodWith( ProcessCleanup.class, true ) != null;
+    }
+
+  /**
+   * Method cleanup calls the annotated child Process object {@link ProcessCleanup} method.
+   * <p/>
+   * This method will not fail if the cleanup method is not implemented.
+   *
+   * @throws ProcessException when
+   */
   public void cleanup() throws ProcessException
     {
     findInvoke( ProcessCleanup.class, true );
     }
 
+  /**
+   * Method hasStart returns true if the annotated child Process object implements the {@link ProcessStart} method.
+   *
+   * @return boolean
+   */
+  public boolean hasStart()
+    {
+    return findMethodWith( ProcessStart.class, true ) != null;
+    }
+
+  /**
+   * Method start calls the annotated child Process object {@link ProcessStart} method.
+   * <p/>
+   * This method will throw an exception if the start method is not implemented. Call {@link #hasStart()}
+   * to verify before calling.
+   *
+   * @throws ProcessException when there is a failure
+   */
   public void start() throws ProcessException
     {
-    findInvoke( ProcessStart.class, false );
+    findInvoke( ProcessStart.class, true );
     }
 
   public void complete() throws ProcessException

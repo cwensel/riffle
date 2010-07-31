@@ -21,7 +21,9 @@ import java.lang.annotation.Target;
  * The ProcessStart method is called after the {@link ProcessPrepare} method. It may be called by the
  * {@link ProcessComplete} method (but will block till the process is finished).
  * <p/>
- * This annotation is not optional.
+ * This annotation is optional. Calling methods should test for its existence with the
+ * {@link riffle.process.scheduler.ProcessWrapper#hasStart} method and should call the corresponding
+ * ProcessComplete annotated method.
  *
  * @see ProcessPrepare
  * @see ProcessComplete
