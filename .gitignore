@@ -1,8 +1,8 @@
 junitvm*.properties
 build.properties
 .DS_Store
-!lib/build
 build
+lib
 dist
 javadoc
 *.iml

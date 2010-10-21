@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 
 <!--
-  ~ Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+  ~ Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
 
-<project name="riffle" default="compile" basedir=".">
+<project name="riffle" default="compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <dirname property="riffle.basedir" file="${ant.file.riffle}"/>
 
@@ -33,15 +33,18 @@
   <property name="test.showoutput" value="no"/>
 
   <property name="lib" location="${riffle.basedir}/lib"/>
-  <property name="lib.build" location="${lib}/build"/>
+  <property name="lib.test" location="${lib}/test"/>
   <property name="dist" location="${riffle.basedir}/dist"/>
   <property name="javadoc" location="${riffle.basedir}/javadoc"/>
   <property name="log" location="${riffle.basedir}/log"/>
 
-  <property name="jar.riffle" value="riffle-${riffle.release.version}-${build.number}.jar"/>
-  <property name="jar.riffle-test" value="riffle-test-${riffle.release.version}-${build.number}.jar"/>
+  <property name="version.riffle" value="${riffle.release.version}-${build.number}"/>
 
-  <property name="tar.riffle.prefix" value="cascading-${riffle.release.version}-${build.number}"/>
+  <property name="jar.riffle" value="riffle-${version.riffle}.jar"/>
+  <property name="jar.riffle-test" value="riffle-test-${version.riffle}.jar"/>
+  <property name="jar.riffle-src" value="riffle-src-${version.riffle}.jar"/>
+
+  <property name="tar.riffle.prefix" value="riffle-${version.riffle}"/>
   <property name="tar.riffle" value="${tar.riffle.prefix}.tgz"/>
 
   <path id="build.class.path">
@@ -66,7 +69,7 @@
       <include name="*.jar"/>
     </fileset>
 
-    <fileset dir="${lib.build}">
+    <fileset dir="${lib.test}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -94,6 +97,7 @@
   <target name="init">
     <echo message="initializing riffle environment..."/>
 
+    <mkdir dir="${lib.test}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${test.results}"/>
@@ -105,7 +109,7 @@
   <target name="compile" depends="init">
     <echo message="building riffle..."/>
 
-    <javac srcdir="${src.java}" destdir="${build.java}" verbose="off" debug="${javac.debug}">
+    <javac srcdir="${src.java}" destdir="${build.java}" verbose="off" debug="${javac.debug}" includeantruntime="false">
       <classpath refid="project.class.path"/>
     </javac>
 
@@ -118,7 +122,7 @@
       </fileset>
     </copy>
 
-    <javac srcdir="${src.test}" destdir="${build.test}" verbose="off" debug="${javac.debug}">
+    <javac srcdir="${src.test}" destdir="${build.test}" verbose="off" debug="${javac.debug}" includeantruntime="false">
       <classpath refid="project.class.path"/>
     </javac>
 
@@ -139,7 +143,7 @@
              packagenames="riffle.*"
              windowtitle="riffle">
       <link href="http://java.sun.com/javase/6/docs/api/"/>
-      <bottom><![CDATA[<i>Copyright &#169; 2007-2009 Concurrent, Inc. All Rights Reserved.</i>]]></bottom>
+      <bottom><![CDATA[<i>Copyright &#169; 2010 Concurrent, Inc. All Rights Reserved.</i>]]></bottom>
     </javadoc>
 
   </target>
@@ -268,33 +272,18 @@
     <jar jarfile="${build}/${jar.riffle-test}" manifest="${build}/MANIFEST.MF" compress="yes">
       <fileset dir="${build.test}">
         <include name="riffle/**"/>
-        <include name="data/**"/>
-        <include name="log4j.properties"/>
-        <include name="hadoop-site.xml"/>
       </fileset>
     </jar>
 
-    <!-- hadoop supports jars in a lib directory -->
-    <mkdir dir="${build.java}/lib"/>
-
-    <copy todir="${build.java}/lib">
-      <fileset dir="${lib}">
-        <include name="*.jar"/>
-      </fileset>
-    </copy>
-
-    <delete dir="${build.java}/META-INF"/>
-
-    <delete dir="${build.java}/META-INF"/>
-
-    <jar jarfile="${build}/${jar.riffle}" manifest="${build}/MANIFEST.MF" compress="yes">
-      <fileset dir="${build.java}"/>
+    <jar jarfile="${build}/${jar.riffle-src}" manifest="${build}/MANIFEST.MF" compress="yes">
+      <fileset dir="${src.java}"/>
+      <fileset dir="${src.test}"/>
     </jar>
 
   </target>
 
   <target name="dist" depends="jar,javadoc">
-    <echo message="creating version: ${riffle.release.version}-${build.number}"/>
+    <echo message="creating version: ${version.riffle}"/>
     <mkdir dir="${dist}"/>
 
     <echo message="build.number=${build.number}" file="${dist}/build.number.properties"/>
@@ -339,6 +328,24 @@
     <property name="package.remote.port" value="22"/>
     <scp file="${tar.riffle}" todir="${package.remote.path}" keyfile="${package.remote.keyfile}"
          passphrase="" port="${package.remote.port}" trust="true"/>
+  </target>
+
+  <target name="retrieve">
+    <ivy:retrieve conf="test" pattern="${lib}/[conf]/[artifact]-[revision].[ext]" sync="true"/>
+  </target>
+
+  <target name="publish" depends="clean,jar">
+
+    <ivy:resolve file="ivy.xml"/>
+
+    <ivy:makepom ivyfile="ivy.xml" pomfile="${build}/riffle-${version.riffle}.pom"/>
+
+    <scp todir="repo@conjars.org:" keyfile="${repo.keyfile}" passphrase="" trust="true">
+      <fileset dir="${build}">
+        <include name="riffle-${version.riffle}.*"/>
+      </fileset>
+    </scp>
+
   </target>
 
 </project>

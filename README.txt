@@ -11,6 +11,16 @@ riffle is a lightweight Java library for executing collections of dependent proc
   See the Cascading open-source project for an alternative tool for executing riffle Annotated classes.
     http://www.cascading.org/
 
+Compiling:
+
+  > ant retrieve jar
+
+Maven/Ivy:
+
+  Riffle lives in the Conjar jar repository (http://conjars.org):
+
+    http://conjars.org/riffle/riffle
+
 License:
 
   riffle is copyrighted by Concurrent, Inc. (http://www.concurrentinc.com/) and licensed under
