@@ -1,0 +1,135 @@
+/*
+ * Copyright (c) 2007-2014 Concurrent, Inc. All Rights Reserved.
+ *
+ * Project and contact information: http://www.cascading.org/
+ *
+ * This file is part of the Cascading project.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply from: 'etc/version.gradle'
+apply from: 'etc/s3Upload.gradle'
+
+allprojects() {
+
+  apply plugin: 'idea'
+  apply plugin: 'eclipse'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = 'http://conjars.org/repo/' }
+  }
+}
+
+ext.distDir = mkdir( "${rootDir}/build/dist" )
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'riffle'
+version = releaseVersion
+
+dependencies {
+ testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+
+javadoc {
+  def copyright = '<i>Copyright &#169; 2007-2014 Concurrent, Inc. All Rights Reserved.</i>'
+
+  title = "Riffle ${releaseVersion}"
+  destinationDir = file( "${distDir}/javadoc/${project.name}" )
+
+  configure( options ) {
+    linkSource = true
+    encoding = "UTF8"
+    bottom = copyright
+  }
+}
+
+task sourcesJar( type: Jar, dependsOn: classes ) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+task javadocJar( type: Jar, dependsOn: javadoc ) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives jar
+  archives sourcesJar
+  archives javadocJar
+}
+
+test {
+  include '**/*Test.class'
+}
+
+uploadArchives {
+
+  def deployer = repositories.mavenDeployer {
+    configuration = configurations.archives
+
+    repository( url: repoUrl ) {
+      authentication( userName: repoUserName, password: repoPassword )
+    }
+
+    pom.project {
+      description 'An API for data management, analytics, and machine learning on parallel computing clusters.'
+      inceptionYear '2010'
+      url 'http://cascading.org/'
+      scm {
+        url 'https://github.com/cwensel/riffle'
+      }
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }
+  // make sure test dependencies come first, so that maven isn't getting
+  // confused, when reading the generated pom
+  [install.repositories.mavenInstaller, deployer]*.pom*.whenConfigured { pom ->
+    def scopeOrder = [test: 1, runtime: 2, provided: 3, compile: 4].withDefault { 100 }
+    pom.dependencies = pom.dependencies.sort { scopeOrder[ it.scope ] }
+  }
+}
+
+task prepareRelease( type: Copy, dependsOn: 'build' ) {
+
+  s3UploadDocs.dependsOn << prepareRelease
+
+  // copy dist and apply any analytics scripts
+  def analytics = System.getProperty( 'publish.docs.analytics', '' )
+
+  from "${distDir}/javadoc/"
+  into "${s3UploadDocs.source}/javadoc/"
+
+  filter { line ->
+    line.replaceAll( "</BODY>", "${analytics}\n</BODY>" )
+  }
+}
+
+prepareRelease << {
+  logger.info( 'built all artifacts' )
+}
+
+s3UploadArtifacts.enabled = false // we aren't packaging anything
+

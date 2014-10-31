@@ -13,7 +13,7 @@ riffle is a lightweight Java library for executing collections of dependent proc
 
 Compiling:
 
-  > ant retrieve jar
+  > gradle build
 
 Maven/Ivy:
 
