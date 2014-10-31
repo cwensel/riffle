@@ -175,6 +175,7 @@ public class ProcessWrapper implements Serializable
     {
     try
       {
+      method.setAccessible( true );
       return method.invoke( process );
       }
     catch( IllegalAccessException exception )
