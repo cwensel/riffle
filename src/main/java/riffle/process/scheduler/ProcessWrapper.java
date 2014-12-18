@@ -1,8 +1,22 @@
 /*
- * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
- *
- * Project and contact information: http://www.concurrentinc.com/
- */
+* Copyright (c) 2007-2014 Concurrent, Inc. All Rights Reserved.
+*
+* Project and contact information: http://www.cascading.org/
+*
+* This file is part of the Cascading project.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package riffle.process.scheduler;
 
@@ -11,12 +25,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
 
 import riffle.process.DependencyIncoming;
 import riffle.process.DependencyOutgoing;
 import riffle.process.Process;
+import riffle.process.ProcessChildren;
 import riffle.process.ProcessCleanup;
 import riffle.process.ProcessComplete;
+import riffle.process.ProcessCounters;
 import riffle.process.ProcessPrepare;
 import riffle.process.ProcessStart;
 import riffle.process.ProcessStop;
@@ -37,6 +55,8 @@ import riffle.process.ProcessStop;
  * @see ProcessCleanup
  * @see riffle.process.DependencyOutgoing
  * @see riffle.process.DependencyIncoming
+ * @see riffle.process.ProcessCounters
+ * @see riffle.process.ProcessChildren
  */
 public class ProcessWrapper implements Serializable
   {
@@ -152,6 +172,36 @@ public class ProcessWrapper implements Serializable
     findInvoke( ProcessStop.class, false );
     }
 
+  public boolean hasCounters() throws ProcessException
+    {
+    return findMethodWith( ProcessCounters.class, true ) != null;
+    }
+
+  public Map<String, Map<String, Long>> getCounters() throws ProcessException
+    {
+    Object counters = findInvoke( ProcessCounters.class, true );
+
+    if( counters == null )
+      return null;
+
+    return (Map<String, Map<String, Long>>) counters;
+    }
+
+  public boolean hasChildren() throws ProcessException
+    {
+    return findMethodWith( ProcessChildren.class, true ) != null;
+    }
+
+  public List<Object> getChildren() throws ProcessException
+    {
+    Object children = findInvoke( ProcessChildren.class, true );
+
+    if( children == null )
+      return null;
+
+    return (List<Object>) children;
+    }
+
   private Object findInvoke( Class<? extends Annotation> type, boolean isOptional ) throws ProcessException
     {
     Method method = null;
@@ -234,5 +284,4 @@ public class ProcessWrapper implements Serializable
       throw new IllegalStateException( "unable to get source or sink", exception.getCause() );
       }
     }
-
   }

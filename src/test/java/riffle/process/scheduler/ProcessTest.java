@@ -25,7 +25,7 @@ public class ProcessTest extends TestCase
 
   public void testProcessController() throws Exception
     {
-    TestableProcess[] processes = new TestableProcess[10];
+    TestableProcess[] processes = new TestableProcess[ 10 ];
 
     for( int i = 0; i < processes.length; i++ )
       processes[ i ] = new SingleResourceTestableProcess( i, Integer.toString( i ), Integer.toString( i + 1 ), 500 );
@@ -35,7 +35,7 @@ public class ProcessTest extends TestCase
 
   public void testProcessControllerMulti() throws Exception
     {
-    TestableProcess[] processes = new TestableProcess[10];
+    TestableProcess[] processes = new TestableProcess[ 10 ];
 
     for( int i = 0; i < processes.length; i++ )
       {
@@ -54,7 +54,7 @@ public class ProcessTest extends TestCase
 
   public void testProcessControllerSorting() throws Exception
     {
-    TestableProcess[] processes = new TestableProcess[10];
+    TestableProcess[] processes = new TestableProcess[ 10 ];
 
     for( int i = 0; i < processes.length; i++ )
       processes[ i ] = new SingleResourceTestableProcess( i, Integer.toString( i ), Integer.toString( i + 1 ), 500 );
@@ -70,7 +70,7 @@ public class ProcessTest extends TestCase
 
   public void testProcessControllerSortingMulti() throws Exception
     {
-    TestableProcess[] processes = new TestableProcess[10];
+    TestableProcess[] processes = new TestableProcess[ 10 ];
 
     for( int i = 0; i < processes.length; i++ )
       {
@@ -93,6 +93,24 @@ public class ProcessTest extends TestCase
     runTest( true, processes );
     }
 
+  public void testCounters() throws Exception
+    {
+    SingleResourceTestableProcess testableProcess = new SingleResourceTestableProcess( 1, "in", "out", 0L );
+
+    ProcessWrapper processWrapper = new ProcessWrapper( testableProcess );
+    assertTrue( processWrapper.hasCounters() );
+    assertNotNull( processWrapper.getCounters() );
+    }
+
+  public void testChildren() throws Exception
+    {
+    SingleResourceTestableProcess testableProcess = new SingleResourceTestableProcess( 1, "in", "out", 0L );
+
+    ProcessWrapper processWrapper = new ProcessWrapper( testableProcess );
+    assertTrue( processWrapper.hasChildren() );
+    assertNotNull( processWrapper.getChildren() );
+    assertEquals( 1, processWrapper.getChildren().size() );
+    }
 
   private void runTest( boolean sort, TestableProcess[] processes )
     {
@@ -112,4 +130,5 @@ public class ProcessTest extends TestCase
       assertTrue( "finished", process.finished );
       }
     }
+
   }

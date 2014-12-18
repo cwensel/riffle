@@ -6,8 +6,15 @@
 
 package riffle.process.scheduler;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import riffle.process.ProcessChildren;
 import riffle.process.ProcessCleanup;
 import riffle.process.ProcessComplete;
+import riffle.process.ProcessCounters;
 import riffle.process.ProcessPrepare;
 import riffle.process.ProcessStart;
 import riffle.process.ProcessStop;
@@ -81,6 +88,18 @@ public abstract class TestableProcess implements Comparable<TestableProcess>
   public void stop()
     {
     stopCalled = true;
+    }
+
+  @ProcessCounters
+  public Map<String, Map<String, Long>> getCounters()
+    {
+    return Collections.emptyMap();
+    }
+
+  @ProcessChildren
+  public List<Object> getChildren() throws Exception
+    {
+    return Arrays.<Object>asList( new SingleResourceTestableProcess( 1, "input", "output", 0L ) );
     }
 
   @Override
