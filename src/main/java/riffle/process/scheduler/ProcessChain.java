@@ -112,7 +112,10 @@ public class ProcessChain
 
   public ProcessChain( boolean topologicallyOrder, Object... objects )
     {
-    processes = new ProcessWrapper[objects.length];
+    if( objects == null || objects.length == 0 )
+      throw new IllegalArgumentException( "must have at least one object argument" );
+
+    processes = new ProcessWrapper[ objects.length ];
 
     for( int i = 0; i < objects.length; i++ )
       processes[ i ] = new ProcessWrapper( objects[ i ] );
@@ -202,7 +205,7 @@ public class ProcessChain
           sorted.add( 0, process );
         }
 
-      processes = sorted.toArray( new ProcessWrapper[sorted.size()] );
+      processes = sorted.toArray( new ProcessWrapper[ sorted.size() ] );
       }
 
     return processes;
