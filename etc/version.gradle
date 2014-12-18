@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+
+
 apply from: './etc/properties.gradle'
 
 project.ext.currentCommit = System.properties[ 'build.vcs.number' ];
