@@ -34,6 +34,7 @@ import riffle.process.Process;
 import riffle.process.ProcessChildren;
 import riffle.process.ProcessCleanup;
 import riffle.process.ProcessComplete;
+import riffle.process.ProcessConfiguration;
 import riffle.process.ProcessCounters;
 import riffle.process.ProcessPrepare;
 import riffle.process.ProcessStart;
@@ -83,6 +84,7 @@ public class ProcessWrapper implements Serializable
     findMethodWith( DependencyIncoming.class, false );
     findMethodWith( ProcessComplete.class, false );
     findMethodWith( ProcessStop.class, false );
+    findMethodWith( ProcessConfiguration.class, true );
     }
 
   public Object getDependencyOutgoing() throws ProcessException
@@ -93,6 +95,11 @@ public class ProcessWrapper implements Serializable
   public Object getDependencyIncoming() throws ProcessException
     {
     return findInvoke( DependencyIncoming.class, false );
+    }
+
+  public Object getConfiguration() throws ProcessException
+    {
+    return findInvoke( ProcessConfiguration.class, true );
     }
 
   /**

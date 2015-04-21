@@ -116,6 +116,15 @@ public class ProcessTest extends TestCase
     assertNotNull( processWrapper.getCounters() );
     }
 
+  public void testConfiguration() throws Exception
+    {
+    SingleResourceTestableProcess testableProcess = new SingleResourceTestableProcess( 1, "in", "out", 0L );
+
+    ProcessWrapper processWrapper = new ProcessWrapper( testableProcess );
+
+    assertNotNull( processWrapper.getConfiguration() );
+    }
+
   public void testChildren() throws Exception
     {
     SingleResourceTestableProcess testableProcess = new SingleResourceTestableProcess( 1, "in", "out", 0L );
@@ -130,7 +139,7 @@ public class ProcessTest extends TestCase
     {
     TestableProcess.lastId = -1;
 
-    ProcessChain processChain = new ProcessChain( sort, processes );
+    ProcessChain processChain = new ProcessChain( sort, (Object[]) processes );
 
     processChain.start();
     processChain.complete();

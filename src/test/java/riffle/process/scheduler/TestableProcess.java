@@ -24,10 +24,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import riffle.process.ProcessChildren;
 import riffle.process.ProcessCleanup;
 import riffle.process.ProcessComplete;
+import riffle.process.ProcessConfiguration;
 import riffle.process.ProcessCounters;
 import riffle.process.ProcessPrepare;
 import riffle.process.ProcessStart;
@@ -89,6 +91,12 @@ public abstract class TestableProcess implements Comparable<TestableProcess>
       {
       // ignore
       }
+    }
+
+  @ProcessConfiguration
+  public Object getConfiguration()
+    {
+    return new Properties();
     }
 
   @ProcessComplete
