@@ -127,8 +127,10 @@ task prepareRelease( type: Copy, dependsOn: 'build' ) {
   }
 }
 
-prepareRelease << {
-  logger.info( 'built all artifacts' )
+prepareRelease  {
+  doLast{
+    logger.info( 'built all artifacts' )
+  }
 }
 
 s3UploadArtifacts.enabled = false // we aren't packaging anything
