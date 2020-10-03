@@ -21,9 +21,10 @@
 apply from: './etc/properties.gradle'
 
 project.ext.currentCommit = System.properties[ 'build.vcs.number' ];
+project.ext.currentBranch = System.properties[ 'build.vcs.branch' ]
 
 if( !currentCommit )
-{
+  {
   def commitPath = File.createTempFile( "commit", "tmp" )
 
   ant.exec( dir: '.', executable: "git", output: commitPath ) {
@@ -33,15 +34,17 @@ if( !currentCommit )
   currentCommit = commitPath.readLines().get( 0 )
 
   commitPath.delete()
-}
+  }
 
 def versionProperties = new Properties()
-file( 'version.properties' ).withInputStream { versionProperties.load( it ) }
+file( 'version.properties' ).withInputStream {versionProperties.load( it )}
 
 ext.majorVersion = versionProperties[ 'riffle.release.major' ]
 ext.minorVersion = versionProperties[ 'riffle.release.minor' ]
 
 ext.buildNumber = System.getProperty( 'build.number', 'dev' ) // local dev or build server build
+
+ext.isFinalRelease = Boolean.getBoolean( "riffle.release.final" ) || currentBranch != null ? !currentBranch.contains( 'wip-' ) : false
 
 if( System.properties[ 'riffle.release.private' ] )
   buildNumber = "priv-${buildNumber}"

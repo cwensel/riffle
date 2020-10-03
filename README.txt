@@ -13,13 +13,13 @@ riffle is a lightweight Java library for executing collections of dependent proc
 
 Compiling:
 
-  > gradle build
+  > ./gradlew build
 
 Maven/Ivy:
 
-  Riffle lives in the Conjar jar repository (http://conjars.org):
+  Riffle lives in the JCenter jar repository (https://jcenter.bintray.com/):
 
-    http://conjars.org/riffle/riffle
+    https://jcenter.bintray.com/net/wensel/riffle/
 
 License:
 
@@ -29,5 +29,3 @@ License:
 Developing:
 
   Contributions are welcome through GitHub via git forks. See http://www.github.com.
-
-  riffle is currently a Work In Progress and is subject to change in incompatible ways before 1.0.

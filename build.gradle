@@ -18,6 +18,10 @@
  * limitations under the License.
  */
 
+plugins {
+  id "io.spring.bintray" version "0.11.1" apply true
+}
+
 apply from: 'etc/version.gradle'
 apply from: 'etc/s3Upload.gradle'
 
@@ -29,25 +33,67 @@ allprojects() {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven { url = 'http://conjars.org/repo/' }
+    jcenter()
+    maven {url = 'https://repository.apache.org'}
   }
 }
 
 ext.distDir = mkdir( "${rootDir}/build/dist" )
 
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: "io.spring.bintray"
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
-group = 'riffle'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'net.wensel'
 version = releaseVersion
+
+// generate Java 9 module names
+ext.moduleName = name.replaceAll( '-', '.' )
 
 dependencies {
   testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+configurations {
+  testArtifacts {
+    extendsFrom testRuntimeClasspath
+  }
+}
+
+bintray {
+  bintrayUser = repoUserName
+  bintrayKey = repoPassword
+
+  org = 'wensel'
+  repo = isFinalRelease ? 'release' : 'wip'
+
+  overrideOnUpload = true
+
+  publication = 'maven'
+
+  licenses = ['Apache-2.0']
+  websiteUrl = 'http://riffle.wensel.net/'
+  issueTrackerUrl = 'https://github.com/cwensel/riffle/issues'
+  vcsUrl = 'https://github.com/cwensel/riffle.git'
+}
+
+task bintrayPublishBuild( dependsOn: [bintrayUpload, bintrayPublish] ) {
+}
+
+jar {
+  inputs.property( "moduleName", moduleName )
+  manifest {
+    attributes( 'Automatic-Module-Name': moduleName )
+  }
+}
 
 javadoc {
   def copyright = '<i>Copyright &#169; 2007-2015 Concurrent, Inc. All Rights Reserved.</i>'
+
+  failOnError = false
 
   title = "Riffle ${releaseVersion}"
   destinationDir = file( "${distDir}/javadoc/${project.name}" )
@@ -69,47 +115,28 @@ task javadocJar( type: Jar, dependsOn: javadoc ) {
   from javadoc.destinationDir
 }
 
+task testsJar( type: Jar, dependsOn: testClasses ) {
+  from sourceSets.test.output
+  archiveClassifier = 'tests'
+}
+
+task testSourcesJar( type: Jar, dependsOn: classes ) {
+  from sourceSets.test.allSource
+  archiveClassifier = 'test-sources'
+}
+
 artifacts {
   archives jar
   archives sourcesJar
   archives javadocJar
+  archives testsJar
+  archives testSourcesJar
+  testArtifacts testsJar
+  testArtifacts testSourcesJar
 }
 
 test {
   include '**/*Test.class'
-}
-
-uploadArchives {
-
-  def deployer = repositories.mavenDeployer {
-    configuration = configurations.archives
-
-    repository( url: repoUrl ) {
-      authentication( userName: repoUserName, password: repoPassword )
-    }
-
-    pom.project {
-      description 'An API for data management, analytics, and machine learning on parallel computing clusters.'
-      inceptionYear '2010'
-      url 'http://cascading.org/'
-      scm {
-        url 'https://github.com/cwensel/riffle'
-      }
-      licenses {
-        license {
-          name 'The Apache Software License, Version 2.0'
-          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          distribution 'repo'
-        }
-      }
-    }
-  }
-  // make sure test dependencies come first, so that maven isn't getting
-  // confused, when reading the generated pom
-  [install.repositories.mavenInstaller, deployer]*.pom*.whenConfigured { pom ->
-    def scopeOrder = [test: 1, runtime: 2, provided: 3, compile: 4].withDefault { 100 }
-    pom.dependencies = pom.dependencies.sort { scopeOrder[ it.scope ] }
-  }
 }
 
 task prepareRelease( type: Copy, dependsOn: 'build' ) {
@@ -122,16 +149,45 @@ task prepareRelease( type: Copy, dependsOn: 'build' ) {
   from "${distDir}/javadoc/"
   into "${s3UploadDocs.source}/javadoc/"
 
-  filter { line ->
+  filter {line ->
     line.replaceAll( "</BODY>", "${analytics}\n</BODY>" ).replaceAll( "</body>", "${analytics}\n</body>" )
   }
 }
 
-prepareRelease  {
-  doLast{
+prepareRelease {
+  doLast {
     logger.info( 'built all artifacts' )
   }
 }
 
 s3UploadArtifacts.enabled = false // we aren't packaging anything
 
+publishing {
+  publications {
+    maven( MavenPublication ) {
+      artifact sourcesJar
+      artifact javadocJar
+      artifact testsJar
+      artifact testSourcesJar
+
+      from components.java
+
+      pom {
+        name = 'riffle'
+        description = 'An API for data management, analytics, and machine learning on parallel computing clusters.'
+        url = 'http://riffle.wensel.net/'
+        inceptionYear = '2007'
+        licenses {
+          license {
+            name = 'The Apache Software License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution = 'repo'
+          }
+        }
+        scm {
+          url = 'https://github.com/cwensel/riffle.git'
+        }
+      }
+    }
+  }
+}
