@@ -75,7 +75,7 @@ bintray {
   publication = 'maven'
 
   licenses = ['Apache-2.0']
-  websiteUrl = 'http://riffle.wensel.net/'
+  websiteUrl = 'http://cascading.wensel.net/'
   issueTrackerUrl = 'https://github.com/cwensel/riffle/issues'
   vcsUrl = 'https://github.com/cwensel/riffle.git'
 }
