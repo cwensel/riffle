@@ -44,7 +44,7 @@ ext.minorVersion = versionProperties[ 'riffle.release.minor' ]
 
 ext.buildNumber = System.getProperty( 'build.number', 'dev' ) // local dev or build server build
 
-ext.isFinalRelease = Boolean.getBoolean( "riffle.release.final" ) || currentBranch != null ? !currentBranch.contains( 'wip-' ) : false
+ext.isFinalRelease = Boolean.getBoolean( "riffle.release.final" ) || (currentBranch != null ? !currentBranch.contains( 'wip-' ) : false)
 
 if( System.properties[ 'riffle.release.private' ] )
   buildNumber = "priv-${buildNumber}"
