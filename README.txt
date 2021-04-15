@@ -17,9 +17,9 @@ Compiling:
 
 Maven/Ivy:
 
-  Riffle lives in the JCenter jar repository (https://jcenter.bintray.com/):
+  Riffle lives in the Maven Central jar repository (https://repo1.maven.org/maven2/):
 
-    https://jcenter.bintray.com/net/wensel/riffle/
+    https://repo1.maven.org/maven2/net/wensel/riffle/
 
 License:
 

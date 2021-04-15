@@ -19,30 +19,25 @@
  */
 
 plugins {
-  id "io.spring.bintray" version "0.11.1" apply true
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
+  id 'idea'
+  id 'eclipse'
+  id "io.github.gradle-nexus.publish-plugin" version '1.0.0'
 }
 
 apply from: 'etc/version.gradle'
 apply from: 'etc/s3Upload.gradle'
 
-allprojects() {
-
-  apply plugin: 'idea'
-  apply plugin: 'eclipse'
-
-  repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-    maven {url = 'https://repository.apache.org'}
-  }
+repositories {
+  mavenLocal()
+  mavenCentral()
+  jcenter()
+  maven {url = 'https://repository.apache.org'}
 }
 
 ext.distDir = mkdir( "${rootDir}/build/dist" )
-
-apply plugin: "io.spring.bintray"
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -54,33 +49,13 @@ version = releaseVersion
 ext.moduleName = name.replaceAll( '-', '.' )
 
 dependencies {
-  testCompile group: 'junit', name: 'junit', version: '4.11'
+  testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
 configurations {
   testArtifacts {
     extendsFrom testRuntimeClasspath
   }
-}
-
-bintray {
-  bintrayUser = repoUserName
-  bintrayKey = repoPassword
-
-  org = 'wensel'
-  repo = isFinalRelease ? 'release' : 'wip'
-
-  overrideOnUpload = true
-
-  publication = 'maven'
-
-  licenses = ['Apache-2.0']
-  websiteUrl = 'http://cascading.wensel.net/'
-  issueTrackerUrl = 'https://github.com/cwensel/riffle/issues'
-  vcsUrl = 'https://github.com/cwensel/riffle.git'
-}
-
-task bintrayPublishBuild( dependsOn: [bintrayUpload, bintrayPublish] ) {
 }
 
 jar {
@@ -107,12 +82,12 @@ javadoc {
 
 task sourcesJar( type: Jar, dependsOn: classes ) {
   from sourceSets.main.allSource
-  classifier = 'sources'
+  archiveClassifier = 'sources'
 }
 
 task javadocJar( type: Jar, dependsOn: javadoc ) {
-  classifier = 'javadoc'
-  from javadoc.destinationDir
+  from javadoc
+  archiveClassifier = 'javadoc'
 }
 
 task testsJar( type: Jar, dependsOn: testClasses ) {
@@ -163,6 +138,18 @@ prepareRelease {
 s3UploadArtifacts.enabled = false // we aren't packaging anything
 
 publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri( "https://maven.pkg.github.com/cwensel/riffle" )
+      credentials {
+        username = repoUserName ?: System.getenv( "GPR_USERNAME" )
+        password = repoPassword ?: System.getenv( "GPR_TOKEN" )
+      }
+    }
+  }
+
+  // publish wips via publishAllPublicationsToGitHubPackagesRepository
   publications {
     maven( MavenPublication ) {
       artifact sourcesJar
@@ -177,6 +164,13 @@ publishing {
         description = 'An API for data management, analytics, and machine learning on parallel computing clusters.'
         url = 'http://riffle.wensel.net/'
         inceptionYear = '2007'
+        developers {
+          developer {
+            name = 'Chris K Wensel'
+            email = 'chris@wensel.net'
+            url = 'https://chris.wensel.net/'
+          }
+        }
         licenses {
           license {
             name = 'The Apache Software License, Version 2.0'
@@ -190,4 +184,21 @@ publishing {
       }
     }
   }
+}
+
+// publish releases via publishToSonatype closeAndReleaseSonatypeStagingRepository
+nexusPublishing {
+  repositories {
+    sonatype {
+      nexusUrl.set( uri( "https://s01.oss.sonatype.org/service/local/" ) )
+      snapshotRepositoryUrl.set( uri( "https://s01.oss.sonatype.org/content/repositories/snapshots/" ) )
+
+      username = repoUserName ?: System.getenv( "MCR_USERNAME" )
+      password = repoPassword ?: System.getenv( "MCR_PASSWORD" )
+    }
+  }
+}
+
+signing {
+  sign publishing.publications.maven
 }
